@@ -15,7 +15,7 @@ var db *gorm.DB // Глобальная переменная для доступ
 
 func initDB() {
 	// Настройки подключения к базе данных
-	dsn := "root:password@tcp(127.0.0.1:3306)/taskify?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "root:Dima1305@tcp(127.0.0.1:3306)/taskify?charset=utf8mb4&parseTime=True&loc=Local"
 	var err error
 	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
