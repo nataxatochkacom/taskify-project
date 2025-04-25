@@ -25,7 +25,7 @@
                 <a href="/login.html">Войти</a>
             </div>
             <div class="auth-links-reg">
-                <a href="/registration.html">Зарегистрироваться</a>
+                <a href="/register.html">Зарегистрироваться</a>
             </div>
         </nav>
     </div>
@@ -180,6 +180,68 @@
             </section>
         </div>
     </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Проверяем, авторизован ли пользователь
+            const token = localStorage.getItem('token');
+            if (token) {
+                // Если токен есть, показываем имя пользователя и скрываем кнопки входа/регистрации
+                handleAuthorizedUser();
+            }
+    
+            // Обработка клика на кнопку "Войти"
+            document.querySelector('.auth-links-login a').addEventListener('click', (event) => {
+                event.preventDefault(); // Предотвращаем переход по умолчанию
+                window.location.href = '/login.html'; // Переходим на страницу входа
+            });
+    
+            // Обработка клика на кнопку "Зарегистрироваться"
+            document.querySelector('.auth-links-reg a').addEventListener('click', (event) => {
+                event.preventDefault(); // Предотвращаем переход по умолчанию
+                window.location.href = '/register.html'; // Переходим на страницу регистрации
+            });
+        });
+    
+        // Функция для обработки авторизованного пользователя
+        async function handleAuthorizedUser() {
+            try {
+                const response = await fetch('/user', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    },
+                });
+    
+                if (response.ok) {
+                    const user = await response.json();
+    
+                    // Скрываем кнопки входа/регистрации
+                    document.querySelector('.auth-links-login').style.display = 'none';
+                    document.querySelector('.auth-links-reg').style.display = 'none';
+    
+                    // Показываем информацию о пользователе
+                    const authSection = document.createElement('div');
+                    authSection.className = 'auth-info';
+                    authSection.innerHTML = `
+                        <span>Привет, ${user.full_name}!</span>
+                        <button onclick="logout()">Выйти</button>
+                    `;
+                    document.querySelector('.navbar').appendChild(authSection);
+                } else {
+                    console.error('Ошибка при проверке статуса пользователя.');
+                }
+            } catch (error) {
+                console.error('Ошибка при запросе к серверу:', error);
+            }
+        }
+    
+        // Функция выхода из системы
+        function logout() {
+            localStorage.removeItem('token'); // Удаляем токен из localStorage
+            location.reload(); // Перезагружаем страницу
+        }
+    </script>
 </body>
 <footer>
     <div class="footer">
@@ -193,3 +255,4 @@
     </div>
 </footer>
 </html>
+
