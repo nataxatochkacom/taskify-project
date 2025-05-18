@@ -1,258 +1,206 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Taskify - знает все о задачах</title>
-    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taskify - Умный менеджер задач</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Bellota+Text&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Italian&display=swap" rel="stylesheet">
+    <link rel="icon" href="pictures/free-icon-list-8109008.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-<header>
+<header class="header">
     <div class="container">
         <nav class="navbar">
-            <div class="image-logo"></div>
-            <img src="pictures/free-icon-list-8109008.png" width="36" height="36">
-            <div class="logo">taskify</div>
-            <ul class="nav-links">
-                <li><a href="#">Главная</a></li>
-                <li><a href="#">О продукте</a></li>
-                <li><a href="#">Цены</a></li>
-                <li><a href="#">Другие продукты</a></li>
-            </ul>
-            <div class="auth-links-login">
-                <a href="/login.html">Войти</a>
+            <div class="logo">
+                <i class="fas fa-tasks"></i>
+                <span>Taskify</span>
             </div>
-            <div class="auth-links-reg">
-                <a href="/register.html">Зарегистрироваться</a>
+            <ul class="nav-links">
+                <li><a href="#features">Возможности</a></li>
+                <li><a href="#about">О продукте</a></li>
+                <li><a href="#contact">Контакты</a></li>
+            </ul>
+            <div class="auth-buttons">
+                <a href="login.html" class="btn btn-outline">Войти</a>
+                <a href="register.html" class="btn btn-primary">Регистрация</a>
+            </div>
+            <div class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
             </div>
         </nav>
     </div>
 </header>
-<main>
+
+<section class="hero">
     <div class="container">
-        <section class="main-content">
-            <div class="text-content">
-                <h1>Taskify</h1>
-                <p>Делайте больше. Меньше усилий.</p>
-                <p>Забудьте о сложности.</p>
-                <a href="#" class="cta-button">Начать бесплатно</a>
+        <div class="hero-content">
+            <h1 class="hero-title animate-fade-in">Управляйте задачами <span>просто</span> и <span>эффективно</span></h1>
+            <p class="hero-subtitle animate-fade-in">Taskify помогает организовать вашу работу и личные дела в одном месте с интуитивно понятным интерфейсом.</p>
+            <div class="hero-buttons animate-fade-in">
+                <a href="login.html" class="btn btn-primary btn-large">Начать бесплатно</a>
+                <a href="#" class="btn btn-outline btn-large">Узнать больше</a>
             </div>
-            <div class="image-content">
-                <img src="pictures/0bef5f5e52ba4bcf36865eba75a5ebb7.png" alt="Taskify Illustration">
-            </div>
-        </section>
-
-        <section class="features">
-            <div class="container">
-                <a class="why-me">Почему нас выбирают?</a>
-                <ul class="features-list">
-                    <li>
-                        <img src="pictures/free-icon-easy-6056675.png" alt="Intuitive Interface">
-                        <span>Интуитивно понятный интерфейс</span>
-                    </li>
-                    <li>
-                        <img src="pictures/free-icon-team-1283342.png" alt="Effective Teamwork">
-                        <span>Эффективная командная работа</span>
-                    </li>
-                    <li>
-                        <img src="pictures/free-icon-tasks-4091120.png" alt="Real-time Progress Tracking">
-                        <span>Отслеживание прогресса в реальном времени</span>
-                    </li>
-                    <li>
-                        <img src="pictures/free-icon-to-do-list-4295926.png" alt="Convenient Task Organization">
-                        <span>Удобная организация задач</span>
-                    </li>
-                </ul>
-            </div>
-        </section>
-    </div>
-</main>
-<main>
-    <div class="page2">
-        <section class="hight-content">
-            <div class="hightcontent">
-                <ul class="high-content-text">Знакомство с Taskify!</ul>
-                <ul class="high-content-big">
-                    <a class="high-content-big-text">Taskify – это мощный и удобный инструмент</a>
-                    <a class="high-content-big-text">для управления проектами и задачами, разработанное</a>
-                    <a class="high-content-big-text">для повышения продуктивности команд и индивидуальных пользователей.</a>
-                    <a class="high-content-big-text">Программа идеально подходит для малого и среднего бизнеса,</a>
-                    <a class="high-content-big-text">фрилансеров, стартапов и крупных компаний,
-                        которые хотят:</a>
-                    <ul class="organization">
-                        <li><span>эффективно организовать рабочие процессы</span></li>
-                        <li><span>улучшить командное взаимодействие </span></li>
-                        <li><span>контролировать выполнение задач в режиме реального времени</span></li>
-
-                    </ul>
-                </ul>
-            </div>
-            <div class="big-image">
-                <img src="pictures/illustration%20of%20freelancer%20man%20with%20laptop.jfif">
-            </div>
-
-        </section>
-    </div>
-</main>
-<main>
-    <div class="page3">
-        <section class="high-content-page3">
-            <div class="high-contentpage3">
-                <ul class="price">Стоимость Taskify!</ul>
-                <a class="button">Используйте для разных целей!</a>
-                <ul class="foroneuser">
-                    <div class="foroneuser-img"><img src="pictures/free-icon-computer-worker-7870479.png"></div>
-                    <a class="one-user">Личное использование</a>
-                    <ul class="one-user-list">
-                        <li>
-                            <img src="pictures/free-icon-approve-sign-8426910.png">
-                            <span>Напоминания</span>
-                        </li>
-                            <li>
-                                <img src="pictures/free-icon-approve-sign-8426910.png">
-                                <span>Создание задач</span>
-                            </li>
-                            <li>
-                                <img src="pictures/free-icon-approve-sign-8426910.png">
-                                <span>Создание проектов</span>
-                            </li>
-                            <li>
-                                <img src="pictures/free-icon-approve-sign-8426910.png">
-                                <span>Назначение ролей</span>
-                            </li>
-                        </ul>
-                        <a class="for-free1">Бесплатно!</a>
-                    </ul>
-                    <ul class="forcorpuser">
-                        <div class="for-corp-user-img"><img src="pictures/free-icon-corporation-8542046.png"></div>
-                        <a class="corp-user">Корпоративное использование</a>
-                        <ul class="corp-user-list">
-                            <li>
-                                <img src="pictures/free-icon-approve-sign-8426910.png">
-                                <span>Напоминания</span>
-                            </li>
-                            <li>
-                                <img src="pictures/free-icon-approve-sign-8426910.png">
-                                <span>Создание задач</span>
-                            </li>
-                            <li>
-                                <img src="pictures/free-icon-approve-sign-8426910.png">
-                                <span>Создание проектов</span>
-                            </li>
-                            <li>
-                                <img src="pictures/free-icon-approve-sign-8426910.png">
-                                <span>Назначение ролей</span>
-                            </li>
-                        </ul>
-                        <a class="for-free2">Бесплатно!</a>
-                    </ul>
-            </div>
-        </section>
-    </div>
-</main>
-<main>
-    <div class="page4">
-        <section class="high-content-page4">
-            <div class="high-contentpage4">
-                <ul class="products">Познакомьтесь с другими нашими проектами!</ul>
-                <ul class="product1">
-                    <img src="pictures/icons8-1c-160.png">
-                    <a class="text-product1">Мобильное приложение
-                            для работников салона красоты
-                            на платформе 1С:Предприятие 8</a>
-                </ul>
-                <ul class="product2">
-                    <img src="pictures/icons8-1c-160.png">
-                    <a class="text-product2">Мобильное приложение
-                            для работников риелторской компании
-                            на платформе 1С:Предприятие 8</a>
-                </ul>
-                <ul class="product3">
-                    <img src="pictures/icons8-1c-160.png">
-                    <a class="text-product3">Мобильное приложение
-                            для работников агентства недвижимости
-                            на платформе 1С:Предприятие 8</a>
-                </ul>
-                <a class="text-bottom">Попробуйте это и многое другое от наших разработчиков!</a>
-                </div>
-            </section>
         </div>
-    </main>
+        <div class="hero-image animate-slide-up">
+            <img src="https://images.unsplash.com/photo-1547658719-da2b51169166?w=600&h=400&fit=crop&q=80" alt="Taskify Dashboard" class="dashboard-img">
+            <div class="floating-elements">
+                <div class="floating-element element-1"><i class="fas fa-check-circle"></i></div>
+                <div class="floating-element element-2"><i class="fas fa-calendar-alt"></i></div>
+                <div class="floating-element element-3"><i class="fas fa-bell"></i></div>
+            </div>
+        </div>
+    </div>
+</section>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            // Проверяем, авторизован ли пользователь
-            const token = localStorage.getItem('token');
-            if (token) {
-                // Если токен есть, показываем имя пользователя и скрываем кнопки входа/регистрации
-                handleAuthorizedUser();
-            }
-    
-            // Обработка клика на кнопку "Войти"
-            document.querySelector('.auth-links-login a').addEventListener('click', (event) => {
-                event.preventDefault(); // Предотвращаем переход по умолчанию
-                window.location.href = '/login.html'; // Переходим на страницу входа
-            });
-    
-            // Обработка клика на кнопку "Зарегистрироваться"
-            document.querySelector('.auth-links-reg a').addEventListener('click', (event) => {
-                event.preventDefault(); // Предотвращаем переход по умолчанию
-                window.location.href = '/register.html'; // Переходим на страницу регистрации
-            });
-        });
-    
-        // Функция для обработки авторизованного пользователя
-        async function handleAuthorizedUser() {
-            try {
-                const response = await fetch('/user', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                    },
-                });
-    
-                if (response.ok) {
-                    const user = await response.json();
-    
-                    // Скрываем кнопки входа/регистрации
-                    document.querySelector('.auth-links-login').style.display = 'none';
-                    document.querySelector('.auth-links-reg').style.display = 'none';
-    
-                    // Показываем информацию о пользователе
-                    const authSection = document.createElement('div');
-                    authSection.className = 'auth-info';
-                    authSection.innerHTML = `
-                        <span>Привет, ${user.full_name}!</span>
-                        <button onclick="logout()">Выйти</button>
-                    `;
-                    document.querySelector('.navbar').appendChild(authSection);
-                } else {
-                    console.error('Ошибка при проверке статуса пользователя.');
-                }
-            } catch (error) {
-                console.error('Ошибка при запросе к серверу:', error);
-            }
-        }
-    
-        // Функция выхода из системы
-        function logout() {
-            localStorage.removeItem('token'); // Удаляем токен из localStorage
-            location.reload(); // Перезагружаем страницу
-        }
-    </script>
-</body>
-<footer>
-    <div class="footer">
-        <ul class="sdelali">Веб-приложение Taskify разработано в качестве проекта по СИПИ</ul>
-        <div class="razrab">Разработчики:
-            <li class="fio">Маслова Н.С.</li>
-            <li class="fio">Подлепин В. А.</li>
-            <li class="fio">Соколов Д.Е.</li>
-            <li class="fio">Цветкова Е.А.</li>
+<section class="features" id="features">
+    <div class="container">
+        <h2 class="section-title">Почему выбирают Taskify</h2>
+        <p class="section-subtitle">Мы создали идеальный инструмент для управления вашими задачами</p>
+
+        <div class="features-grid">
+            <div class="feature-card animate-card">
+                <div class="feature-icon">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <h3>Быстрый старт</h3>
+                <p>Интуитивно понятный интерфейс позволяет начать работу сразу после регистрации без долгого обучения.</p>
+            </div>
+
+            <div class="feature-card animate-card">
+                <div class="feature-icon">
+                    <i class="fas fa-sync-alt"></i>
+                </div>
+                <h3>Синхронизация</h3>
+                <p>Доступ к вашим задачам с любого устройства. Все изменения синхронизируются в реальном времени.</p>
+            </div>
+
+            <div class="feature-card animate-card">
+                <div class="feature-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>Командная работа</h3>
+                <p>Создавайте общие проекты, назначайте задачи коллегам и отслеживайте прогресс всей команды.</p>
+            </div>
+
+            <div class="feature-card animate-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Аналитика</h3>
+                <p>Наглядные графики и отчеты помогут анализировать продуктивность и оптимизировать рабочий процесс.</p>
+            </div>
+
+            <div class="feature-card animate-card">
+                <div class="feature-icon">
+                    <i class="fas fa-bell"></i>
+                </div>
+                <h3>Напоминания</h3>
+                <p>Ни одна важная задача не будет забыта благодаря гибкой системе напоминаний по email и push-уведомлениям.</p>
+            </div>
+
+            <div class="feature-card animate-card">
+                <div class="feature-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <h3>Безопасность</h3>
+                <p>Ваши данные защищены современными методами шифрования и регулярно резервируются.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="about" id="about">
+    <div class="container">
+        <div class="about-content">
+            <div class="about-text">
+                <h2 class="section-title">О Taskify</h2>
+                <p>Taskify - это современное веб-приложение для управления задачами, созданное с любовью к деталям и вниманием к потребностям пользователей.</p>
+                <p>Наша миссия - помочь людям и командам организовать свою работу, снизить стресс от перегрузки задачами и сосредоточиться на действительно важных вещах.</p>
+                <p>С Taskify вы сможете:</p>
+                <ul class="about-list">
+                    <li><i class="fas fa-check"></i> Создавать и организовывать задачи в проекты</li>
+                    <li><i class="fas fa-check"></i> Устанавливать приоритеты и сроки выполнения</li>
+                    <li><i class="fas fa-check"></i> Работать в команде над общими проектами</li>
+                    <li><i class="fas fa-check"></i> Анализировать свою продуктивность</li>
+                </ul>
+            </div>
+            <div class="about-image animate-slide-up">
+                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&h=400&fit=crop&q=80" alt="Taskify Interface">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta">
+    <div class="container">
+        <div class="cta-content">
+            <h2 class="cta-title">Готовы повысить свою продуктивность?</h2>
+            <p class="cta-subtitle">Присоединяйтесь к тысячам довольных пользователей Taskify</p>
+            <a href="register.html" class="btn btn-primary btn-large">Зарегистрироваться бесплатно</a>
+        </div>
+    </div>
+</section>
+
+<footer class="footer" id="contact">
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-col">
+                <div class="logo">
+                    <i class="fas fa-tasks"></i>
+                    <span>Taskify</span>
+                </div>
+                <p>Лучший помощник в организации ваших задач и проектов.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-col">
+                <h3>Продукт</h3>
+                <ul>
+                    <li><a href="#">Возможности</a></li>
+                    <li><a href="#">Тарифы</a></li>
+                    <li><a href="#">Приложения</a></li>
+                    <li><a href="#">Новости</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h3>Компания</h3>
+                <ul>
+                    <li><a href="#">О нас</a></li>
+                    <li><a href="#">Карьера</a></li>
+                    <li><a href="#">Блог</a></li>
+                    <li><a href="#">Партнеры</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h3>Поддержка</h3>
+                <ul>
+                    <li><a href="#">Центр помощи</a></li>
+                    <li><a href="#">Сообщество</a></li>
+                    <li><a href="#">Контакты</a></li>
+                    <li><a href="#">Документация</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2023 Taskify. Все права защищены.</p>
+            <div class="footer-links">
+                <a href="#">Политика конфиденциальности</a>
+                <a href="#">Условия использования</a>
+                <a href="#">Правовая информация</a>
+            </div>
         </div>
     </div>
 </footer>
-</html>
 
+<script src="script.js"></script>
+</body>
+</html>
