@@ -1,0 +1,7 @@
+site_name: Taskify Docs
+nav:
+  - Главная страница: INDEX.md
+  - Документация для разработчиков: DEVELOPER.md
+  - Руководство по стилям: CSS-GUIDE.md
+
+theme: readthedocs

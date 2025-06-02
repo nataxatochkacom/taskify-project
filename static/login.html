@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Вход</title>
+    <link rel="stylesheet" href="styles-login.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bellota+Text&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Italian&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Вход</h2>
+            <p>Введите свою почту и пароль.</p>
+            <form action="" method="post">
+                <div class="form-group">
+                    <label>Электронная почта</label>
+                    <input type="email" name="email" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Пароль</label>
+                    <input type="password" name="password" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <input type="submit" name="submit" class="btn btn-primary" value="Войти">
+                </div>
+                <p>Забыли пароль? Не отчаивайтесь, нужно было в блокнот записывать. </p>
+                <p>Нет аккаунта? <a href="register.html">Создайте его за минуту</a>.</p>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelector('form').addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const email = document.querySelector('input[name="email"]').value;
+        const password = document.querySelector('input[name="password"]').value;
+
+        try {
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                localStorage.setItem('token', data.token);
+                alert("Вы успешно вошли в систему!");
+                window.location.href = '/dashboard.html';
+            } else {
+                alert(data.message || "Неверные учетные данные");
+            }
+        } catch (error) {
+            console.error('Ошибка при авторизации:', error);
+            alert("Произошла ошибка. Попробуйте позже.");
+        }
+    });
+</script>
+</body>
+</html>

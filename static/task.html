@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taskify - Управление проектами</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css">
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background-color: #f8f9fa;
+        }
+        .main-content {
+            padding: 20px;
+        }
+        .project-card, .task-card {
+            margin-bottom: 20px;
+            transition: transform 0.2s;
+        }
+        .project-card:hover, .task-card:hover {
+            transform: translateY(-5px);
+        }
+        .deadline-warning {
+            border-left: 4px solid #ffc107;
+        }
+        .deadline-danger {
+            border-left: 4px solid #dc3545;
+        }
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #6c757d;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .assignee-badge {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Навигационное меню -->
+        <div class="col-md-2 sidebar p-0">
+            <nav class="navbar navbar-expand-md navbar-light bg-light flex-md-column align-items-start py-3">
+                <a class="navbar-brand mb-3 px-3" href="#">
+                    <h4>Taskify</h4>
+                </a>
+                <button class="navbar-toggler mx-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse w-100" id="navbarNav">
+                    <ul class="navbar-nav flex-column w-100">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#projects-section">
+                                <i class="bi bi-folder me-2"></i>Мои проекты
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#tasks-section">
+                                <i class="bi bi-list-task me-2"></i>Мои задачи
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#calendar-section">
+                                <i class="bi bi-calendar me-2"></i>Календарь
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#profile-section">
+                                <i class="bi bi-person me-2"></i>Личный кабинет
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="px-3 mt-auto w-100">
+                    <div class="d-flex align-items-center">
+                        <div class="avatar me-2" id="user-avatar">JD</div>
+                        <div>
+                            <div class="fw-bold" id="user-name">John Doe</div>
+                            <small class="text-muted" id="user-email">john.doe@example.com</small>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Основное содержимое -->
+        <div class="col-md-10 main-content">
+            <!-- Проекты -->
+            <section id="projects-section">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2>Мои проекты</h2>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newProjectModal">
+                        <i class="bi bi-plus"></i> Новый проект
+                    </button>
+                </div>
+
+                <div class="row" id="projects-container">
+                    <!-- Проекты будут загружаться здесь -->
+                </div>
+            </section>
+
+            <!-- Задачи -->
+            <section id="tasks-section" class="mt-5">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    
+<div class="d-flex justify-content-end mb-3">
+    <button class="btn btn-outline-primary" id="share-btn">
+        <i class="bi bi-link-45deg"></i> Поделиться
+    </button>
+</div>
+<h2>Мои задачи</h2>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newTaskModal" disabled id="new-task-btn">
+                        <i class="bi bi-plus"></i> Новая задача
+                    </button>
+                </div>
+
+                <div class="row" id="tasks-container">
+                    <!-- Задачи будут загружаться здесь -->
+                </div>
+            </section>
+
+            <!-- Календарь -->
+            <section id="calendar-section" class="mt-5">
+                <h2 class="mb-4">Календарь</h2>
+                <div id="calendar"></div>
+            </section>
+
+            <!-- Личный кабинет -->
+            <section id="profile-section" class="mt-5">
+                <h2 class="mb-4">Личный кабинет</h2>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h4>Персональная информация</h4>
+                                <div class="mb-3">
+                                    <label class="form-label">ФИО</label>
+                                    <input type="text" class="form-control" id="profile-name" value="John Doe">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="profile-email" value="john.doe@example.com">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Роль</label>
+                                    <select class="form-select" id="profile-role">
+                                        <option value="Менеджер">Менеджер</option>
+                                        <option value="Разработчик">Разработчик</option>
+                                        <option value="Дизайнер">Дизайнер</option>
+                                        <option value="Тестировщик">Тестировщик</option>
+                                        <option value="Администратор">Администратор</option>
+                                    </select>
+
+                                </div>
+                                <button class="btn btn-primary" id="save-profile-btn">Сохранить изменения</button>
+                            </div>
+                            <div class="col-md-6">
+                                <h4>Уведомления</h4>
+                                <div id="notifications-list">
+                                    <!-- Уведомления будут загружаться здесь -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <hr class="mt-5">
+            <div class="card mt-4">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Информация о пользователе</h5>
+                    <p class="card-text mb-1"><strong>ФИО:</strong> <span id="footer-user-name">—</span></p>
+                    <p class="card-text mb-1"><strong>Email:</strong> <span id="footer-user-email">—</span></p>
+                    <p class="card-text"><strong>Роль:</strong> <span id="footer-user-role">—</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно нового проекта -->
+<div class="modal fade" id="newProjectModal" tabindex="-1" aria-labelledby="newProjectModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="newProjectModalLabel">Новый проект</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="new-project-form">
+                    <div class="mb-3">
+                        <label for="project-name" class="form-label">Название проекта</label>
+                        <input type="text" class="form-control" id="project-name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="project-description" class="form-label">Описание</label>
+                        <textarea class="form-control" id="project-description" rows="3"></textarea>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="project-start-date" class="form-label">Дата начала</label>
+                            <input type="date" class="form-control" id="project-start-date">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="project-end-date" class="form-label">Дата окончания</label>
+                            <input type="date" class="form-control" id="project-end-date">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-primary" id="save-project-btn">Сохранить проект</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно новой задачи -->
+<div class="modal fade" id="newTaskModal" tabindex="-1" aria-labelledby="newTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="newTaskModalLabel">Новая задача</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="new-task-form">
+                    <div class="mb-3">
+                        <label for="task-project" class="form-label">Проект</label>
+                        <select class="form-select" id="task-project" required>
+                            <option value="" selected disabled>Выберите проект</option>
+                            <!-- Проекты будут загружены здесь -->
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="task-name" class="form-label">Название задачи</label>
+                        <input type="text" class="form-control" id="task-name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="task-description" class="form-label">Описание</label>
+                        <textarea class="form-control" id="task-description" rows="3"></textarea>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="task-start-date" class="form-label">Дата начала</label>
+                            <input type="date" class="form-control" id="task-start-date">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="task-end-date" class="form-label">Дата окончания</label>
+                            <input type="date" class="form-control" id="task-end-date">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="task-responsible" class="form-label">Ответственный</label>
+                        <select class="form-select" id="task-responsible">
+                            <!-- Ответственные будут загружены здесь -->
+                        </select>
+<div class="mb-3">
+    <label for="task-priority" class="form-label">Приоритет</label>
+    <select class="form-select" id="task-priority">
+        <option value="Low">Низкий</option>
+        <option value="Medium" selected>Средний</option>
+        <option value="High">Высокий</option>
+    </select>
+</div>
+
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-primary" id="save-task-btn">Сохранить задачу</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно редактирования проекта -->
+<!-- Модальное окно редактирования проекта -->
+<div class="modal fade" id="editProjectModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Редактировать проект</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-project-form">
+                    <input type="hidden" id="edit-project-id">
+                    <div class="mb-3">
+                        <label class="form-label">Название проекта</label>
+                        <input type="text" class="form-control" id="edit-project-name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Описание</label>
+                        <textarea class="form-control" id="edit-project-description" rows="3"></textarea>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Дата начала</label>
+                            <input type="date" class="form-control" id="edit-project-start-date">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Дата окончания</label>
+                            <input type="date" class="form-control" id="edit-project-end-date">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-primary" id="update-project-btn">Сохранить изменения</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Модальное окно редактирования задачи -->
+<div class="modal fade" id="editTaskModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Редактировать задачу</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <input type="hidden" id="edit-task-id">
+          <div class="mb-3">
+            <label>Название</label>
+            <input type="text" class="form-control" id="edit-task-name">
+          </div>
+          <div class="mb-3">
+            <label>Описание</label>
+            <textarea class="form-control" id="edit-task-description"></textarea>
+          </div>
+          <div class="row">
+            <div class="col">
+              <label>Начало</label>
+              <input type="date" class="form-control" id="edit-task-start-date">
+            </div>
+            <div class="col">
+              <label>Дедлайн</label>
+              <input type="date" class="form-control" id="edit-task-end-date">
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+        <button type="button" class="btn btn-primary" id="update-task-btn">Сохранить изменения</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+// Фильтрация задач по приоритету и сроку
+document.getElementById('filter-priority').addEventListener('change', applyTaskFilters);
+document.getElementById('filter-deadline').addEventListener('change', applyTaskFilters);
+
+function applyTaskFilters() {
+    const priorityFilter = document.getElementById('filter-priority').value;
+    const deadlineFilter = document.getElementById('filter-deadline').value;
+    const now = new Date();
+
+    const filtered = window.allTasks.filter(task => {
+        let matchesPriority = true;
+        let matchesDeadline = true;
+
+        if (priorityFilter) {
+            matchesPriority = task.Priority === priorityFilter;
+        }
+
+        if (deadlineFilter && task.End_date) {
+            const end = new Date(task.End_date);
+            const diffDays = Math.ceil((end - now) / (1000 * 60 * 60 * 24));
+
+            if (deadlineFilter === 'today') {
+                matchesDeadline = diffDays === 0;
+            } else if (deadlineFilter === 'week') {
+                matchesDeadline = diffDays >= 0 && diffDays <= 7;
+            } else if (deadlineFilter === 'overdue') {
+                matchesDeadline = diffDays < 0;
+            }
+        }
+
+        return matchesPriority && matchesDeadline;
+    });
+
+    renderTasks(filtered);
+    updateCalendarEvents(filtered);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const shareBtn = document.getElementById('share-btn');
+    const shareModal = new bootstrap.Modal(document.getElementById('shareModal'));
+    const generateBtn = document.getElementById('generate-link-btn');
+    const generatedLink = document.getElementById('generated-link');
+    const linkContainer = document.getElementById('generated-link-container');
+
+    if (shareBtn) {
+        shareBtn.addEventListener('click', () => {
+            shareModal.show();
+        });
+    }
+
+    if (generateBtn) {
+        generateBtn.addEventListener('click', () => {
+            const role = document.getElementById('share-role').value;
+            fetch('/api/share', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                },
+                body: JSON.stringify({ role })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.link) {
+                    generatedLink.value = window.location.origin + data.link;
+                    linkContainer.classList.remove('d-none');
+                } else {
+                    alert('Ошибка при создании ссылки');
+                }
+            });
+        });
+    }
+});
+</script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/ru.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const calendarEl = document.getElementById('calendar');
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'ru',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            events: [] // события будут загружены позже
+        });
+        calendar.render();
+        window.taskifyCalendar = calendar;
+        // Обработчик кнопки "Сохранить проект"
+        setTimeout(() => {
+            const saveBtn = document.getElementById('save-project-btn');
+            if (saveBtn) {
+                saveBtn.addEventListener('click', function () {
+                    console.log("Кнопка нажата!");
+                    saveProject();
+                });
+            } else {
+                console.error('Кнопка #save-project-btn не найдена!');
+            }
+
+            const updateBtn = document.getElementById('update-project-btn');
+            if (updateBtn) {
+                updateBtn.addEventListener('click', function () {
+                    console.log("Кнопка обновления проекта нажата!");
+                    updateProject();
+                });
+            } else {
+                console.error('Кнопка #update-project-btn не найдена!');
+            }
+            const newTaskBtn = document.getElementById('new-task-btn');
+            if (newTaskBtn) {
+                newTaskBtn.addEventListener('click', () => {
+                    loadProjectsForTaskModal(); // заполним список проектов
+                    const modal = new bootstrap.Modal(document.getElementById('newTaskModal'));
+                    modal.show();
+            });
+            }
+            const saveTaskBtn = document.getElementById('save-task-btn');
+            if (saveTaskBtn) {
+                saveTaskBtn.addEventListener('click', () => {
+                    console.log("Кнопка сохранения задачи нажата!");
+                    saveTask();
+                });
+            } else {
+                console.error("Кнопка #save-task-btn не найдена");
+            }
+            const updateTaskBtn = document.getElementById('update-task-btn');
+            if (updateTaskBtn) {
+                updateTaskBtn.addEventListener('click', updateTask);
+            }
+            const saveProfileBtn = document.getElementById('save-profile-btn');
+            if (saveProfileBtn) {
+                saveProfileBtn.addEventListener('click', saveProfile);
+            }
+        }, 500);
+
+        
+        
+
+        // Загрузка данных
+        loadUserData();
+        loadProjects();
+        loadTasks().then(tasks => {
+            updateCalendarEvents(tasks);
+            generateDeadlineNotifications(tasks);
+        });
+        loadResponsibles();
+        loadNotifications();
+
+         // ждём, пока DOM стабильно отрисуется
+
+
+        // Можно также подключать другие кнопки тут, если нужно
+    });
+
+
+    function loadUserData() {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert('Вы не авторизованы!');
+            window.location.href = '/login.html';
+            return;
+        }
+
+        fetch('/api/user', {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        })
+        .then(res => {
+            if (!res.ok) {
+                throw new Error("Ошибка авторизации");
+            }
+            return res.json();
+        })
+        .then(user => {
+            console.log('Загруженный пользователь:', user); // Для отладки
+            updateUserProfile(user);
+        })
+        .catch(err => {
+            alert('Ошибка входа: ' + err.message);
+            window.location.href = '/login.html';
+        });
+    }
+
+
+    function updateUserProfile(userData) {
+        const fullName = userData.full_name || '—';
+        const email = userData.email || '—';
+        const role = userData.Role || 'Менеджер';
+
+        document.getElementById('user-name').textContent = fullName;
+        document.getElementById('user-email').textContent = email;
+        document.getElementById('profile-name').value = fullName;
+        document.getElementById('profile-email').value = email;
+
+        const roleSelect = document.getElementById('profile-role');
+        if (roleSelect) {
+            let matched = false;
+            for (let i = 0; i < roleSelect.options.length; i++) {
+                const option = roleSelect.options[i];
+                if (option.value === role) {
+                    roleSelect.selectedIndex = i;
+                    matched = true;
+                    break;
+                }
+            }
+            // Если не совпало — добавим новую опцию
+            if (!matched) {
+                const newOption = new Option(role, role, true, true);
+                roleSelect.appendChild(newOption);
+            }
+        }
+
+        const initials = fullName.split(' ').map(n => n[0]).join('').toUpperCase();
+        document.getElementById('user-avatar').textContent = initials;
+
+        document.getElementById('footer-user-name').textContent = fullName;
+        document.getElementById('footer-user-email').textContent = email;
+        document.getElementById('footer-user-role').textContent = role;
+    }
+
+
+    function loadProjects() {
+        fetch('/api/projects', {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            }
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Ошибка загрузки проектов');
+            return response.json();
+        })
+        .then(projects => {
+            renderProjects(projects);
+            populateProjectDropdown(projects);
+        })
+        .catch(error => {
+            console.error('Ошибка при загрузке проектов:', error);
+        });
+    }
+
+
+    function renderProjects(projects) {
+        const container = document.getElementById('projects-container');
+        container.innerHTML = '';
+
+        projects.forEach(project => {
+            const deadlineClass = project.Is_overdue ? 'deadline-danger' :
+                isDeadlineClose(project.End_date) ? 'deadline-warning' : '';
+
+            const projectCard = document.createElement('div');
+            projectCard.className = `col-md-6 col-lg-4 project-card ${deadlineClass}`;
+            projectCard.innerHTML = `
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <h5 class="card-title">${project.Name}</h5>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item edit-project-btn" data-id="${project.id_Project}" href="#">Редактировать</a></li>
+                                        <li><a class="dropdown-item delete-project-btn" data-id="${project.id_Project}" href="#">Удалить</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <p class="card-text">${project.Description || 'Нет описания'}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                ${project.Start_date ? `<small class="text-muted">Начало: ${formatDate(project.Start_date)}</small>` : ''}
+                                ${project.End_date ? `<small class="text-muted">Дедлайн: ${formatDate(project.End_date)}</small>` : ''}
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <button class="btn btn-sm btn-outline-primary add-task-btn" data-project-id="${project.id_Project}">
+                                Добавить задачу
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+            container.appendChild(projectCard);
+        });
+
+        document.getElementById('new-task-btn').disabled = projects.length === 0;
+        setTimeout(() => {
+            const editBtns = document.querySelectorAll('.edit-project-btn');
+            editBtns.forEach(btn => {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const projectId = btn.getAttribute('data-id');
+                    if (projectId) {
+                        console.log('Редактировать проект:', projectId);
+                        editProject(projectId);
+                    }
+                });
+            });
+
+            const deleteBtns = document.querySelectorAll('.delete-project-btn');
+            deleteBtns.forEach(btn => {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const projectId = btn.getAttribute('data-id');
+                    if (projectId) {
+                        console.log('Удалить проект:', projectId);
+                        deleteProject(projectId);
+                    }
+                });
+            });
+        }, 100);
+    }
+
+    function populateProjectDropdown(projects) {
+        const dropdown = document.getElementById('task-project');
+        dropdown.innerHTML = '<option value="" selected disabled>Выберите проект</option>';
+
+        projects.forEach(project => {
+            const option = document.createElement('option');
+            option.value = project.id_Project;
+            option.textContent = project.Name;
+            dropdown.appendChild(option);
+        });
+    }
+
+    function loadTasks() {
+        return fetch('/api/tasks', {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            }
+        })
+        .then(response => response.json())
+        .then(tasks => {
+            renderTasks(tasks);
+            return tasks;
+        });
+    }
+
+
+    function renderTasks(tasks) {
+        const container = document.getElementById('tasks-container');
+        container.innerHTML = '';
+
+        tasks.forEach(task => {
+            const deadlineClass = task.Is_overdue ? 'deadline-danger' :
+                isDeadlineClose(task.End_date) ? 'deadline-warning' : '';
+
+            const taskCard = document.createElement('div');
+            taskCard.className = `col-md-6 col-lg-4 task-card ${deadlineClass}`;
+            let priorityColor = '';
+            if (task.Priority === 'High') {
+                priorityColor = 'border-start border-5 border-danger';
+            } else if (task.Priority === 'Medium') {
+                priorityColor = 'border-start border-5 border-warning';
+            } else if (task.Priority === 'Low') {
+                priorityColor = 'border-start border-5 border-success';
+            }
+
+            taskCard.innerHTML = `
+                <div class="card h-100 ${priorityColor}">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h5 class="card-title">${task.Name}</h5>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item edit-task-btn" data-id="${task.id_Task}" href="#">Редактировать</a></li>
+                                    <li><a class="dropdown-item delete-task-btn" data-id="${task.id_Task}" href="#">Удалить</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <p class="card-text">${task.Description || 'Нет описания'}</p>
+                        <div class="mb-2">
+                            <small class="text-muted">Проект: ${getProjectName(task.id_Project)}</small>
+                        </div>
+                        <div class="mb-2">
+                            <span class="badge ${
+                                task.Priority === 'High' ? 'bg-danger' :
+                                task.Priority === 'Medium' ? 'bg-warning text-dark' :
+                                'bg-success'
+                            }">Приоритет: ${
+                                task.Priority === 'High' ? 'Высокий' :
+                                task.Priority === 'Medium' ? 'Средний' :
+                                'Низкий'
+                            }</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            ${task.Start_date ? `<small class="text-muted">Начало: ${formatDate(task.Start_date)}</small>` : ''}
+                            ${task.End_date ? `<small class="text-muted">Конец: ${formatDate(task.End_date)}</small>` : ''}
+                        </div>
+                        <div class="assignees">
+                            <span class="badge bg-light text-dark assignee-badge">
+                                ${task.Responsible || 'Не назначен'}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+
+            container.appendChild(taskCard);
+
+            setTimeout(() => {
+                const editTaskBtns = document.querySelectorAll('.edit-task-btn');
+                editTaskBtns.forEach(btn => {
+                    btn.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        const taskId = btn.getAttribute('data-id');
+                        if (taskId) {
+                            console.log('Редактировать задачу:', taskId);
+                            editTask(taskId);
+                        }
+                    });
+                });
+
+                const deleteBtns = document.querySelectorAll('.delete-task-btn');
+                deleteBtns.forEach(btn => {
+                    btn.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        const taskId = btn.getAttribute('data-id');
+                        if (taskId) {
+                            console.log('Удалить задачу:', taskId);
+                            deleteTask(taskId);
+                        }
+                    });
+                });
+            }, 100);
+        });
+    }
+
+    function loadResponsibles() {
+        fetch('/api/responsibles', {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            }
+        })
+        .then(response => {
+            if (!response.ok) throw new Error("Не удалось загрузить ответственных");
+            return response.json();
+        })
+        .then(responsibles => {
+            populateResponsiblesDropdown(responsibles);
+        })
+        .catch(err => {
+            console.error("Ошибка загрузки ответственных:", err.message);
+        });
+    }
+
+
+    function populateResponsiblesDropdown(responsibles) {
+        const dropdown = document.getElementById('task-responsible');
+        dropdown.innerHTML = '<option value="" selected disabled>Выберите ответственного</option>';
+
+        responsibles.forEach(responsible => {
+            const option = document.createElement('option');
+            option.value = responsible.id_Responsible;
+            option.textContent = responsible.Name;
+            dropdown.appendChild(option);
+        });
+    }
+
+    function generateDeadlineNotifications(tasks) {
+        const today = new Date();
+        const notifications = [];
+
+        tasks.forEach(task => {
+            if (!task.End_date) return;
+
+            const end = new Date(task.End_date);
+            const diffDays = Math.ceil((end - today) / (1000 * 60 * 60 * 24));
+
+            if (diffDays === 0) {
+                notifications.push({
+                    Name: "Сегодня дедлайн!",
+                    Message: `Сегодня крайний срок задачи "${task.Name}"`
+                });
+            } else if (diffDays === 1) {
+                notifications.push({
+                    Name: "Дедлайн завтра",
+                    Message: `Завтра крайний срок по задаче "${task.Name}"`
+                });
+            } else if (diffDays < 0) {
+                notifications.push({
+                    Name: "Просрочена задача",
+                    Message: `Задача "${task.Name}" просрочена`
+                });
+            }
+        });
+
+        renderNotifications(notifications);
+    }
+
+
+    function renderNotifications(notifications) {
+        const container = document.getElementById('notifications-list');
+        container.innerHTML = '';
+
+        if (notifications.length === 0) {
+            container.innerHTML = '<p>У вас нет новых уведомлений</p>';
+            return;
+        }
+
+        notifications.forEach(notification => {
+            const notificationElement = document.createElement('div');
+            notificationElement.className = 'card mb-2';
+            notificationElement.innerHTML = `
+                    <div class="card-body">
+                        <h5 class="card-title">${notification.Name}</h5>
+                        <p class="card-text">${notification.Message}</p>
+                        <small class="text-muted">Задача: ${notification.Task}</small>
+                    </div>
+                `;
+            container.appendChild(notificationElement);
+        });
+    }
+
+    function updateCalendarEvents(tasks) {
+        const calendar = window.taskifyCalendar;
+        if (!calendar) return;
+
+        
+const events = tasks.map(task => {
+    let color = '#198754'; // зелёный по умолчанию
+    if (task.Priority === 'High') color = '#dc3545';
+    else if (task.Priority === 'Medium') color = '#ffc107';
+    else if (task.Priority === 'Low') color = '#198754';
+    return {
+
+                title: task.Name,
+                start: task.Start_date,
+                end: task.End_date,
+                color: color
+            };
+        });
+
+        calendar.removeAllEvents();
+        calendar.addEventSource(events);
+    }
+
+
+    function setupEventHandlers() {
+        // Сохранение нового проекта
+        document.getElementById('save-project-btn').addEventListener('click', saveProject);
+
+        // Сохранение новой задачи
+        document.getElementById('save-task-btn').addEventListener('click', saveTask);
+
+        // Сохранение профиля
+        document.getElementById('save-profile-btn').addEventListener('click', saveProfile);
+
+        // Обработчики для динамически созданных элементов
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('edit-project-btn')) {
+                e.preventDefault();
+                const projectId = e.target.getAttribute('data-id');
+                editProject(projectId);
+            }
+
+            if (e.target.classList.contains('delete-project-btn')) {
+                e.preventDefault();
+                const projectId = e.target.getAttribute('data-id');
+                deleteProject(projectId);
+            }
+
+            if (e.target.classList.contains('add-task-btn')) {
+                e.preventDefault();
+                const projectId = e.target.getAttribute('data-project-id');
+                prepareNewTaskForProject(projectId);
+            }
+
+            if (e.target.classList.contains('edit-task-btn')) {
+                e.preventDefault();
+                const taskId = e.target.getAttribute('data-id');
+                editTask(taskId);
+            }
+
+            if (e.target.classList.contains('delete-task-btn')) {
+                e.preventDefault();
+                const taskId = e.target.getAttribute('data-id');
+                deleteTask(taskId);
+            }
+        });
+    }
+
+    function saveProject() {
+        const name = document.getElementById('project-name').value;
+        const description = document.getElementById('project-description').value;
+        const startDate = document.getElementById('project-start-date').value;
+        const endDate = document.getElementById('project-end-date').value;
+
+        const payload = {
+            Name: name,
+            Description: description,
+            Start_date: startDate,
+            End_date: endDate,
+            Is_overdue: false
+        };
+
+        console.log("Сохраняем проект:", payload); // Проверка
+
+        fetch('/api/projects', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(res => {
+            if (!res.ok) return res.text().then(text => { throw new Error(text) });
+            return res.json();
+        })
+        .then(data => {
+            console.log("Проект создан:", data);
+            bootstrap.Modal.getInstance(document.getElementById('newProjectModal')).hide();
+            loadProjects();
+        })
+        .catch(err => {
+            alert("Ошибка при создании проекта: " + err.message);
+        });
+}
+
+
+
+    function saveTask() {
+        const payload = {
+            id_Project: parseInt(document.getElementById('task-project').value),
+            Name: document.getElementById('task-name').value,
+            Description: document.getElementById('task-description').value,
+            Start_date: document.getElementById('task-start-date').value,
+            End_date: document.getElementById('task-end-date').value,
+            id_Responsible: parseInt(document.getElementById('task-responsible').value) || null,
+            Is_overdue: false
+        };
+
+        console.log("Payload:", JSON.stringify(payload, null, 2));
+
+        fetch('/api/tasks', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(res => {
+            if (!res.ok) throw new Error("Ошибка при создании задачи");
+            return res.json();
+        })
+        .then(data => {
+            bootstrap.Modal.getInstance(document.getElementById('newTaskModal')).hide();
+            loadTasks();
+        })
+        .catch(err => {
+            alert("Ошибка: " + err.message);
+        });
+    }
+
+
+    function saveProfile() {
+        const fullName = document.getElementById('profile-name').value;
+        const email = document.getElementById('profile-email').value;
+        const role = document.getElementById('profile-role').value;
+
+
+
+        fetch('/api/user', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            },
+            body: JSON.stringify({
+                full_name: fullName,
+                email: email,
+                role: role
+            })
+        })
+        .then(res => {
+            if (!res.ok) throw new Error("Ошибка при обновлении профиля");
+            return res.json();
+        })
+        .then(data => {
+            alert('Профиль успешно обновлен');
+            loadUserData();
+        })
+        .catch(err => {
+            alert("Ошибка: " + err.message);
+        });
+    }
+
+
+    function prepareNewTaskForProject(projectId) {
+        document.getElementById('task-project').value = projectId;
+        const modal = new bootstrap.Modal(document.getElementById('newTaskModal'));
+        modal.show();
+    }
+
+    function editProject(projectId) {
+        fetch(`/api/projects`, {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            }
+        })
+        .then(res => res.json())
+        .then(projects => {
+            const project = projects.find(p => p.id_Project == projectId);
+            if (!project) return alert("Проект не найден");
+
+            document.getElementById('edit-project-id').value = project.id_Project;
+            document.getElementById('edit-project-name').value = project.Name;
+            document.getElementById('edit-project-description').value = project.Description || '';
+            document.getElementById('edit-project-start-date').value = project.Start_date || '';
+            document.getElementById('edit-project-end-date').value = project.End_date || '';
+
+            const modal = new bootstrap.Modal(document.getElementById('editProjectModal'));
+            modal.show();
+        });
+    }
+
+
+    function deleteProject(projectId) {
+        if (!confirm("Вы уверены, что хотите удалить этот проект?")) return;
+
+        fetch(`/api/projects/${projectId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            }
+        })
+        .then(response => {
+            if (response.status === 204) {
+                loadProjects();
+            } else {
+                return response.text().then(text => {
+                    throw new Error(text);
+                });
+            }
+        })
+        .catch(error => {
+            alert("Ошибка при удалении проекта: " + error.message);
+        });
+    }
+
+    function updateProject() {
+        const id = document.getElementById('edit-project-id').value;
+        const payload = {
+            Name: document.getElementById('edit-project-name').value,
+            Description: document.getElementById('edit-project-description').value,
+            Start_date: document.getElementById('edit-project-start-date').value,
+            End_date: document.getElementById('edit-project-end-date').value,
+        };
+
+        fetch(`/api/projects/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(res => {
+            if (!res.ok) throw new Error("Ошибка при обновлении проекта");
+            return res.json();
+        })
+        .then(data => {
+            bootstrap.Modal.getInstance(document.getElementById('editProjectModal')).hide();
+            loadProjects();
+        })
+        .catch(err => {
+            alert(err.message);
+        });
+    }
+
+    function updateTask() {
+        const id = document.getElementById('edit-task-id').value;
+        const payload = {
+            Name: document.getElementById('edit-task-name').value,
+            Description: document.getElementById('edit-task-description').value,
+            Start_date: document.getElementById('edit-task-start-date').value,
+            End_date: document.getElementById('edit-task-end-date').value,
+        };
+
+        fetch(`/api/tasks/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(res => {
+            if (!res.ok) throw new Error("Ошибка при обновлении задачи");
+            return res.json();
+        })
+        .then(data => {
+            bootstrap.Modal.getInstance(document.getElementById('editTaskModal')).hide();
+            loadTasks(); // обновим список
+        })
+        .catch(err => {
+            alert(err.message);
+        });
+    }
+
+    function editTask(taskId) {
+        console.log('Редактирование задачи с ID:', taskId);
+
+        fetch('/api/tasks', {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            }
+        })
+        .then(res => res.json())
+        .then(tasks => {
+            const task = tasks.find(t => t.id_Task == taskId);
+            if (!task) return alert("Задача не найдена");
+
+            document.getElementById('edit-task-id').value = task.id_Task;
+            document.getElementById('edit-task-name').value = task.Name;
+            document.getElementById('edit-task-description').value = task.Description;
+            document.getElementById('edit-task-start-date').value = task.Start_date;
+            document.getElementById('edit-task-end-date').value = task.End_date;
+
+            const modal = new bootstrap.Modal(document.getElementById('editTaskModal'));
+            modal.show();
+        })
+        .catch(err => {
+            console.error("Ошибка при загрузке задачи:", err);
+            alert("Не удалось загрузить данные задачи.");
+        });
+    }
+
+
+    function deleteTask(taskId) {
+        if (!confirm("Вы уверены, что хотите удалить эту задачу?")) return;
+
+        fetch(`/api/tasks/${taskId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            }
+        })
+        .then(response => {
+            if (response.status === 204) {
+                loadTasks();
+            } else {
+                return response.text().then(text => {
+                    throw new Error(text);
+                });
+            }
+        })
+        .catch(error => {
+            alert("Ошибка при удалении задачи: " + error.message);
+        });
+    }
+    
+
+    // Вспомогательные функции
+    function formatDate(dateString) {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('ru-RU');
+    }
+
+    function isDeadlineClose(deadline) {
+        if (!deadline) return false;
+        const today = new Date();
+        const deadlineDate = new Date(deadline);
+        const diffTime = deadlineDate - today;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        return diffDays <= 3 && diffDays >= 0;
+    }
+
+    function isDeadlineWarning(deadline) {
+        if (!deadline) return false;
+        const today = new Date();
+        const deadlineDate = new Date(deadline);
+        const diffTime = deadlineDate - today;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        return diffDays <= 7 && diffDays > 3;
+    }
+
+    function getProjectName(projectId) {
+        // В реальном приложении здесь будет запрос к API или поиск в локальном списке проектов
+        return `Проект ${projectId}`;
+    }
+</script>
+
+<!-- Share Modal -->
+<div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="shareModalLabel">Поделиться задачами</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+      </div>
+      <div class="modal-body">
+        <label for="share-role" class="form-label">Выберите роль доступа</label>
+        <select id="share-role" class="form-select mb-3">
+            <option value="admin">Администратор</option>
+            <option value="manager">Менеджер</option>
+            <option value="user">Пользователь</option>
+            <option value="viewer" selected>Зритель</option>
+        </select>
+        <button class="btn btn-primary" id="generate-link-btn">Сгенерировать ссылку</button>
+        <div class="mt-3 d-none" id="generated-link-container">
+            <label class="form-label">Ссылка:</label>
+            <input type="text" readonly class="form-control" id="generated-link">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const shareBtn = document.getElementById('share-btn');
+    const modalEl = document.getElementById('shareModal');
+    const shareModal = modalEl ? new bootstrap.Modal(modalEl) : null;
+    const generateBtn = document.getElementById('generate-link-btn');
+    const generatedLink = document.getElementById('generated-link');
+    const linkContainer = document.getElementById('generated-link-container');
+
+    if (shareBtn && shareModal) {
+        shareBtn.addEventListener('click', () => {
+            shareModal.show();
+        });
+    } else {
+        console.error('Кнопка или модалка не найдены');
+    }
+
+    if (generateBtn) {
+        generateBtn.addEventListener('click', () => {
+            const role = document.getElementById('share-role').value;
+            fetch('/api/share', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                },
+                body: JSON.stringify({ role })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.link) {
+                    generatedLink.value = window.location.origin + data.link;
+                    linkContainer.classList.remove('d-none');
+                } else {
+                    alert('Ошибка при создании ссылки');
+                }
+            })
+            .catch(err => {
+                console.error('Ошибка запроса:', err);
+                alert('Не удалось создать ссылку');
+            });
+        });
+    }
+});
+</script>
+</body>
+</html>

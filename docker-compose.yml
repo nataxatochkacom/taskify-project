@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: taskify
+      MYSQL_USER: taskifyuser
+      MYSQL_PASSWORD: taskifypass
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    environment:
+      DB_USER: taskifyuser
+      DB_PASS: taskifypass
+      DB_NAME: taskify
+      DB_HOST: mysql
+
+volumes:
+  db_data:
