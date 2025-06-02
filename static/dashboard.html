@@ -13,7 +13,7 @@
         <div class="col-md-12">
             <h2>Личный кабинет</h2>
             <p>Вы успешно вошли в систему.</p>
-            <a href="task.html">К задачам!</a>
+            <button onclick="goToTasks()">К задачам!</button>
             <button onclick="logout()">Выйти</button>
         </div>
     </div>
@@ -24,6 +24,17 @@
         localStorage.removeItem('token');
         alert("Вы вышли из системы.");
         window.location.href = '/login.html';
+    }
+    function goToTasks() {
+        // Проверим наличие токена
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert('Вы не авторизованы!');
+            window.location.href = '/login.html';
+            return;
+        }
+        // Переход
+        window.location.href = '/task.html';
     }
 </script>
 </body>

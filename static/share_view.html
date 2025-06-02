@@ -1,0 +1,65 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Поделённые задачи</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-4">
+    <h2>Задачи по ссылке</h2>
+    <p><strong>Роль доступа:</strong> <span id="access-role">...</span></p>
+    <div id="task-list" class="row g-3"></div>
+</div>
+
+<script>
+function formatDate(dateStr) {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString("ru-RU");
+}
+
+function renderTasks(tasks) {
+    const taskList = document.getElementById('task-list');
+    taskList.innerHTML = '';
+    tasks.forEach(task => {
+        const col = document.createElement('div');
+        col.className = 'col-md-6 col-lg-4';
+        col.innerHTML = `
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">${task.Name}</h5>
+                    <p class="card-text">${task.Description || 'Нет описания'}</p>
+                    <p class="card-text"><small class="text-muted">Начало: ${formatDate(task.Start_date)}</small></p>
+                    <p class="card-text"><small class="text-muted">Конец: ${formatDate(task.End_date)}</small></p>
+                    <span class="badge ${task.Priority === 'High' ? 'bg-danger' : task.Priority === 'Medium' ? 'bg-warning text-dark' : 'bg-success'}">
+                        Приоритет: ${task.Priority}
+                    </span>
+                </div>
+            </div>
+        `;
+        taskList.appendChild(col);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const uuid = window.location.pathname.split('/').pop();
+    fetch('/api/share/' + uuid)
+        .then(res => res.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
+            document.getElementById('access-role').textContent = data.role;
+            renderTasks(data.tasks);
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Ошибка загрузки задач');
+        });
+});
+</script>
+</body>
+</html>

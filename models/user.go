@@ -9,6 +9,7 @@ type User struct {
 	Full_name    string `gorm:"column:Full_name" json:"full_name"`
 	Email        string `gorm:"column:Email;unique" json:"email"`
 	PasswordHash string `gorm:"column:password_hash" json:"-"`
+	Role         string `gorm:"column:Role" json:"Role"`
 }
 
 // Метод для хеширования пароля

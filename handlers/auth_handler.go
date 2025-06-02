@@ -6,7 +6,7 @@ import (
     "time"
 
     "task/TASKIFY-SAAS/services"
-    "github.com/dgrijalva/jwt-go" // Используем стандартную библиотеку для JWT
+    "github.com/golang-jwt/jwt/v4"
     "github.com/gofiber/fiber/v2"
 )
 
@@ -80,21 +80,19 @@ func LoginHandler(c *fiber.Ctx) error {
 }
 
 // Функция для генерации JWT токена
+
 func generateJWT(userID uint, email string) string {
-    // Создаем claims (утверждения) для токена
-    claims := jwt.StandardClaims{
-        Issuer:    strconv.Itoa(int(userID)), // ID пользователя
-        Subject:   email,                     // Email пользователя
-        ExpiresAt: time.Now().Add(time.Hour * 24).Unix(), // Время истечения токена
+    claims := jwt.RegisteredClaims{
+        Issuer:    strconv.Itoa(int(userID)),
+        Subject:   email,
+        ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
+        IssuedAt:  jwt.NewNumericDate(time.Now()),
     }
 
-    // Создаем новый токен с HMAC подписью
     token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-    // Подписываем токен с использованием секретного ключа
     signedToken, err := token.SignedString([]byte("your-secret-key"))
     if err != nil {
-        // Обработка ошибки подписи токена
         return ""
     }
 
